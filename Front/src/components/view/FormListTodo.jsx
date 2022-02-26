@@ -43,7 +43,7 @@ const FormListTodo = () => {
           setState({ ...state, name: event.target.value })
         }}  ></input>
 
-        <button className='btn btn-primary mb-2' onClick={onAdd}>Crear Lista</button>
+        <button className='btn btn-success mb-2' onClick={onAdd}>Crear Lista</button>
       
         </div>
       

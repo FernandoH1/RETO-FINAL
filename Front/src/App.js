@@ -5,15 +5,10 @@ import ShowListTodo from './components/view/ShowListTodo';
 
 function App() {
   return <StoreProvider>
-  <div className="container">
-
-    <div className='row justify-content-center'><h1>Dashboard</h1></div>
-    <div><h3>Ingrese la Lista</h3></div>
-    
+  <div className="container" id={"bordeConteiner"}>
+    <div className='row justify-content-center'><h1>Reto Final</h1></div>
     <FormListTodo />
     <ShowListTodo />
-    
-
   </div>
   </StoreProvider>
 }

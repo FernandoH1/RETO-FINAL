@@ -6,8 +6,6 @@ const HOST_API = "http://localhost:8080/api";
 const ListTodo = (props) => {
     const [todoUpdate, setTodoUpdate] = useState("");
     const { dispatch, state: { todo } } = useContext(Store);
-    const item = todo.item;
-    const currentList = todo.list;
     const [dataTodo, setDataTodo] = useState("");
     const [update, setUpdate] = useState(props.listTodo);
 
@@ -28,13 +26,8 @@ const ListTodo = (props) => {
                     return elemento.id == update.id
                 })[0];
                 setUpdate(filtrar)
-                console.log(update);
-
-                console.log(filtrar);
-                //console.log(list);
             })
     }
-
 
     const changeDataListTodo = (event) => {
         setDataTodo({ ...dataTodo, name: event.target.value });
@@ -45,7 +38,6 @@ const ListTodo = (props) => {
         if (botonCrear.current.innerHTML == "actualizar") {
             let t = todoUpdate;
             t.name = inputCrear.current.value;
-            console.log("ENTRO EN EL IF");
 
             fetch(HOST_API + "/todo", {
                 method: "PUT",
@@ -62,7 +54,6 @@ const ListTodo = (props) => {
                 });
 
         } else {
-            console.log("ENTRO EN EL ELSE");
             event.preventDefault();
 
             const request = {
@@ -72,7 +63,6 @@ const ListTodo = (props) => {
                 idListTodo: update.id,
                 nameListTodo: update.name
             };
-            console.log(request);
 
             fetch(HOST_API + "/todo", {
                 method: "POST",
@@ -84,7 +74,6 @@ const ListTodo = (props) => {
                 .then(response => response.json())
                 .then((todo) => {
                     setDataTodo({ name: "" });
-                    console.log(todo);
                     let algo = update.listTodo;
                     algo.push(todo);
                     setDataTodo({ ...update, algo });
@@ -125,11 +114,12 @@ const ListTodo = (props) => {
             nameListTodo: nameListTodos
         };
 
-        console.log(todo.name)
+
+        
         if (event.target.checked) {
-            botonEditar.current.disabled = true;
+            document.getElementById(todo.id).disabled = true;
         } else {
-            botonEditar.current.disabled = false;
+            document.getElementById(todo.id).disabled = false;
         }
 
         fetch(HOST_API + "/todo", {
@@ -145,17 +135,14 @@ const ListTodo = (props) => {
             });
     };
 
-    const botonEditar = useRef();
+    
     const inputCrear = useRef();
     const botonCrear = useRef();
 
-    const fueraDeFoco = () => {
-        botonCrear.current.innerHTML = "Crear";
-    }
 
     return (<div className='container aplicarBorde'>
         <div className='alineaccion'>
-            <h3>{update.name}</h3><button className='btn btn-primary m-2' onClick={() => onDelete(update.id)}>Eliminar</button>
+            <h3>{update.name}</h3><button className='btn btn-danger m-2' onClick={() => onDelete(update.id)}>Eliminar</button>
         </div>
         <div className='alineaccion'>
             <input type="text" class="form-control mb-2"
@@ -164,27 +151,32 @@ const ListTodo = (props) => {
                 onChange={(event) => changeDataListTodo(event)
                 }
                 ref={inputCrear}
-               >
+            >
             </input>
             <button onClick={(event) => onCreateTodo(event)}
                 ref={botonCrear}
-                className='btn btn-primary m-2'>Crear</button>
+                className='btn btn-success m-2'>Crear</button>
         </div>
-        <table>
-            <tr>
-                <td>ID</td>
-                <td>Tarea</td>
-                <td>¿Completado?</td>
-            </tr>
+        <table className="table table-striped table-secondary">
+            <thead>
+                <tr>
+                    <th scope="col">#ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Completado?</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
             {update.listTodo.map((todo, index) => {
-                return <><tr key={todo.id}>
-                </tr><tr>
-                        <td>{todo.id}</td>
-                        <td>{todo.name}</td>
+                return <> <tbody><tr key={todo.id}></tr>
+                    <tr>
+                        <th scope="row">{todo.id}</th>
+                        <th scope="row">{todo.name}</th>
+                      
                         <td><input type="checkbox" defaultChecked={todo.completed} onChange={(event) => onChangeTodo(event, update.listTodo[index], update.id, update.name)}></input></td>
-                        <td><button className='btn btn-primary m-2' onClick={() => onDeleteTodo(todo.id)}>Eliminar</button>
-                            <button className='btn btn-primary' ref={botonEditar} onClick={() => onEditTodo(update.listTodo[index], update.id, update.name)}>Editar</button></td>
-                    </tr></>
+                        <td><button className='btn btn-danger m-2' onClick={() => onDeleteTodo(todo.id)}>Eliminar</button>
+                            <button className='btn btn-primary' id={todo.id} onClick={() => onEditTodo(update.listTodo[index], update.id, update.name)}>Editar</button></td>
+                        
+                    </tr></tbody></>
             })}
         </table>
     </div>);
@@ -200,7 +192,6 @@ const ShowListTodo = () => {
             .then(response => response.json())
             .then((list) => {
                 dispatch({ type: "update-list", list })
-                console.log(list);
             })
     }, [dispatch]);
 
